@@ -6,5 +6,5 @@ up:
 down:
 	docker-compose down
 gen-pb:
-	cp guruguru.proto ./go/guruguru.proto && \
-		docker-compose run --rm --no-deps go /protoc/bin/protoc ./try_lb.proto --go_out=plugins=grpc:guruguru
+	mkdir -p trylb && \
+	docker-compose run --rm --no-deps client /protoc/bin/protoc ./trylb.proto --go_out=plugins=grpc:trylb

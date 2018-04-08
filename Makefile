@@ -1,10 +1,15 @@
-.PHONY: build up down gen-pb
-build:
-	docker-compose build
-up:
-	docker-compose up
-down:
-	docker-compose down
+all: build
+build-server:
+	go build -o server/server github.com/hakobe/grpc-try-load-balancing/server
+build-client:
+	go build -o client/client github.com/hakobe/grpc-try-load-balancing/client
 gen-pb:
-	mkdir -p trylb && \
-	docker-compose run --rm --no-deps client /protoc/bin/protoc ./trylb.proto --go_out=plugins=grpc:trylb
+	mkdir -p trylb && protoc ./trylb.proto --go_out=plugins=grpc:trylb
+build: gen-pb build-server build-client
+
+.PHONY: \
+	build-server \
+	build-client \
+	gen-pb \
+	build \
+	all

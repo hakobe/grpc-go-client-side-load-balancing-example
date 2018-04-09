@@ -7,7 +7,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/hakobe/grpc-try-load-balancing/echo"
+	"github.com/hakobe/grpc-go-client-side-load-balancing-example/echo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )

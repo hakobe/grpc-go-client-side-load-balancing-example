@@ -44,7 +44,7 @@ func callEcho(client echo.EchoServiceClient, message string) {
 	res, err := client.Echo(
 		ctx,
 		&echo.EchoRequest{Message: message},
-		grpc.FailFast(false),
+		grpc.FailFast(false), // To wait a resolver returning addrs.
 		grpc.Peer(&p),
 	)
 	if err != nil {

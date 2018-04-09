@@ -2,7 +2,8 @@ package main
 
 import "google.golang.org/grpc/naming"
 
-func NewPseudoResolver(addrs []string) *pseudoResolver {
+// NewPseudoResolver creates a new pseudo resolver which returns fixed addrs.
+func NewPseudoResolver(addrs []string) naming.Resolver {
 	return &pseudoResolver{addrs}
 }
 
@@ -22,6 +23,8 @@ func (r *pseudoResolver) Resolve(target string) (naming.Watcher, error) {
 	return w, nil
 }
 
+// This watcher is implemented based on ipwatcher below
+// https://github.com/grpc/grpc-go/blob/30fb59a4304034ce78ff68e21bd25776b1d79488/naming/dns_resolver.go#L151-L171
 type pseudoWatcher struct {
 	updatesChan chan []*naming.Update
 }

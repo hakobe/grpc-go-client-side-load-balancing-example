@@ -8,7 +8,7 @@ trap 'kill $(jobs -p)' EXIT
 
 sleep 3
 
-time ./client/client -n 10000 \
+time ./client/client -n 100 \
     -server localhost:5000 \
     -server localhost:5001 \
     -server localhost:5002 \

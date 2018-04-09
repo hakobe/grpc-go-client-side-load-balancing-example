@@ -10,7 +10,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	trylb "github.com/hakobe/grpc-try-load-balancing/trylb"
+	"github.com/hakobe/grpc-try-load-balancing/echo"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -26,9 +26,8 @@ func init() {
 type Server struct {
 }
 
-func (s *Server) Echo(ctx context.Context, in *trylb.EchoRequest) (*trylb.EchoResponse, error) {
-
-	return &trylb.EchoResponse{Message: in.GetMessage()}, nil
+func (s *Server) Echo(ctx context.Context, in *echo.EchoRequest) (*echo.EchoResponse, error) {
+	return &echo.EchoResponse{Message: in.GetMessage()}, nil
 }
 
 func serve(hostPort string) {
@@ -50,7 +49,7 @@ func serve(hostPort string) {
 			grpc_zap.StreamServerInterceptor(zapLogger, opts...),
 		),
 	)
-	trylb.RegisterEchoServiceServer(s, &Server{})
+	echo.RegisterEchoServiceServer(s, &Server{})
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

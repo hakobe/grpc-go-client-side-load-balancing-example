@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	trylb "github.com/hakobe/grpc-try-load-balancing/trylb"
+	"github.com/hakobe/grpc-try-load-balancing/echo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/naming"
 	"google.golang.org/grpc/peer"
@@ -67,14 +67,14 @@ func (w *watcher) Close() {
 	close(w.updatesChan)
 }
 
-func callEcho(client trylb.EchoServiceClient, message string) {
+func callEcho(client echo.EchoServiceClient, message string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	var p peer.Peer
 	res, err := client.Echo(
 		ctx,
-		&trylb.EchoRequest{Message: message},
+		&echo.EchoRequest{Message: message},
 		grpc.FailFast(false),
 		grpc.Peer(&p),
 	)
@@ -99,7 +99,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := trylb.NewEchoServiceClient(conn)
+	c := echo.NewEchoServiceClient(conn)
 
 	var wg sync.WaitGroup
 	for i := 0; i < 10000; i++ {

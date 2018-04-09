@@ -1,5 +1,5 @@
 syntax = "proto3";
-package trylb;
+package echo;
 
 message EchoRequest {
     string message = 1;

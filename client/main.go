@@ -11,7 +11,6 @@ import (
 
 	"github.com/hakobe/grpc-try-load-balancing/echo"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/naming"
 	"google.golang.org/grpc/peer"
 )
 
@@ -29,42 +28,12 @@ func (as *addrsValue) Set(addr string) error {
 }
 
 var serverAddrs addrsValue
+var callTimes int
 
 func init() {
-	flag.Var(&serverAddrs, "server", "specify server hostports")
+	flag.Var(&serverAddrs, "server", "Server hostports")
+	flag.IntVar(&callTimes, "n", 10000, "Times to call")
 	flag.Parse()
-}
-
-type resolver struct {
-	addrs []string
-}
-
-func (r *resolver) Resolve(target string) (naming.Watcher, error) {
-	w := &watcher{
-		updatesChan: make(chan []*naming.Update, 1),
-	}
-	updates := []*naming.Update{}
-	for _, addr := range r.addrs {
-		updates = append(updates, &naming.Update{Op: naming.Add, Addr: addr})
-	}
-	w.updatesChan <- updates
-	return w, nil
-}
-
-type watcher struct {
-	updatesChan chan []*naming.Update
-}
-
-func (w *watcher) Next() ([]*naming.Update, error) {
-	us, ok := <-w.updatesChan
-	if !ok {
-		return nil, errWatcherClose
-	}
-	return us, nil
-}
-
-func (w *watcher) Close() {
-	close(w.updatesChan)
 }
 
 func callEcho(client echo.EchoServiceClient, message string) {
@@ -92,7 +61,7 @@ func main() {
 	conn, err := grpc.Dial(
 		"dummy",
 		grpc.WithInsecure(),
-		grpc.WithBalancer(grpc.RoundRobin(&resolver{addrs: serverAddrs})),
+		grpc.WithBalancer(grpc.RoundRobin(NewPseudoResolver(serverAddrs))),
 	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -102,7 +71,7 @@ func main() {
 	c := echo.NewEchoServiceClient(conn)
 
 	var wg sync.WaitGroup
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < callTimes; i++ {
 		wg.Add(1)
 		go func(i int) {
 			callEcho(c, fmt.Sprintf("hello %d", i))

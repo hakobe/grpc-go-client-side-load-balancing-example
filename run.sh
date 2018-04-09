@@ -1,14 +1,14 @@
 #!/bin/bash
+trap 'kill $(jobs -p)' EXIT
+
 ./server/server -hostport 0.0.0.0:5000 &
 ./server/server -hostport 0.0.0.0:5001 &
 ./server/server -hostport 0.0.0.0:5002 &
 ./server/server -hostport 0.0.0.0:5003 &
 
-trap 'kill $(jobs -p)' EXIT
+sleep 3
 
-sleep 5
-
-time ./client/client \
+time ./client/client -n 10000 \
     -server localhost:5000 \
     -server localhost:5001 \
     -server localhost:5002 \

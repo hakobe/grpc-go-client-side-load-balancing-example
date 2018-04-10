@@ -1,8 +1,8 @@
 # gRPC client side load balancing example using Go
 
-This is a gRPC client-side load balancing example on top of grpc-go.
+This is a gRPC client-side load balancing example on top of [grpc-go](https://github.com/grpc/grpc-go).
 
-The only load balancer bundled to [grpc-go](https://github.com/grpc/grpc-go) is `grpc.RoundRobin`. grpc RoundRoubin requires a `grpc.Resolver` which is intended to implement a DNS resolver or an other resourse resolution mechanism like Consul.
+The only load balancer bundled to grpc-go is `grpc.RoundRobin`. grpc RoundRoubin requires a `grpc.Resolver` which is intended to implement a DNS resolver or an other resourse resolution mechanism like Consul.
 
 In this example I implemented a `grpc.Resolver` which only returns fixed servers initially passed. It is good for trying gRPC load balancing instantly.
 
